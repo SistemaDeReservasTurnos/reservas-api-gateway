@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ public class GatewayExceptionHandler {
 
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<GatewayErrorResponse> handleWebClientResponseException(WebClientResponseException ex, ServerHttpRequest request) {
+        int statusCode = ex.getStatusCode().value();
+        String statusText = ex.getStatusText().trim();
         Map<String, Object> responseBody;
         String errorBody = ex.getResponseBodyAsString();
 
@@ -28,16 +32,23 @@ public class GatewayExceptionHandler {
             });
         } catch (JsonProcessingException e) {
             responseBody = new HashMap<>();
-            responseBody.put("message", errorBody);
+            responseBody.put("error", errorBody);
+        }
+
+        String oauth2ErrrorCode =  String.valueOf(responseBody.get("error"));
+
+        if (Objects.equals(oauth2ErrrorCode, "temporarily_unavailable")) {
+            statusCode = HttpStatus.SERVICE_UNAVAILABLE.value();
+            statusText = HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase();
         }
 
         GatewayErrorResponse errorResponse = new GatewayErrorResponse(
-                ex.getStatusCode().value(),
+                statusCode,
                 request.getPath().toString(),
-                ex.getStatusText(),
+                statusText,
                 responseBody
         );
 
-        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+        return ResponseEntity.status(statusCode).body(errorResponse);
     }
 }
