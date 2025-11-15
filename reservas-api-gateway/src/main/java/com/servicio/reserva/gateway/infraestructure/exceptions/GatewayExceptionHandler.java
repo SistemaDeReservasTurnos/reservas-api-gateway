@@ -8,11 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +24,9 @@ import java.util.Objects;
 public class GatewayExceptionHandler {
     private final ObjectMapper objectMapper;
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(WebExchangeBindException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public GatewayErrorResponse handleValidationException(MethodArgumentNotValidException ex, ServerHttpRequest request) {
+    public Mono<GatewayErrorResponse> handleValidationException(WebExchangeBindException ex, ServerHttpRequest request) {
         Map<String, String> fieldErrors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             if (error instanceof FieldError) {
@@ -35,7 +36,11 @@ public class GatewayExceptionHandler {
             }
         });
 
-        return new GatewayErrorResponse(HttpStatus.BAD_REQUEST.value(), request.getPath().toString(), HttpStatus.BAD_REQUEST.getReasonPhrase(), fieldErrors);
+        System.out.println("fieldErrors: " + fieldErrors);
+
+        return Mono.just(
+                new GatewayErrorResponse(HttpStatus.BAD_REQUEST.value(), request.getPath().toString(), HttpStatus.BAD_REQUEST.getReasonPhrase(), fieldErrors)
+        );
     }
 
     @ExceptionHandler(WebClientResponseException.class)
