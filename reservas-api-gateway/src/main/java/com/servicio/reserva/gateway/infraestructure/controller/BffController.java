@@ -3,6 +3,7 @@ package com.servicio.reserva.gateway.infraestructure.controller;
 import com.servicio.reserva.gateway.application.dto.LoginRequest;
 import com.servicio.reserva.gateway.application.dto.RefreshTokenRequest;
 import com.servicio.reserva.gateway.application.dto.TokenResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,7 +32,7 @@ public class BffController {
     }
 
     @PostMapping("/auth/login")
-    public Mono<TokenResponse> login(@RequestBody LoginRequest loginRequest) {
+    public Mono<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         String authHeader = "Basic " + Base64.getEncoder()
                 .encodeToString((clientId + ":" + clientSecret).getBytes());
 
@@ -51,7 +52,7 @@ public class BffController {
     }
 
     @PostMapping("/auth/refresh")
-    public Mono<TokenResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public Mono<TokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         String authHeader = "Basic " + Base64.getEncoder()
                 .encodeToString((clientId + ":" + clientSecret).getBytes());
 

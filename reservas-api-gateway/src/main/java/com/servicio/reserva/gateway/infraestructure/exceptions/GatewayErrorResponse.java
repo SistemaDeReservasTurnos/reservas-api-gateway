@@ -11,9 +11,9 @@ public class GatewayErrorResponse {
     private int status;
     private String path;
     private String error;
-    private Map<String, Object> message;
+    private Map<String, String> message;
 
-    public GatewayErrorResponse(int status, String path, String error, Map<String, Object> message) {
+    public GatewayErrorResponse(int status, String path, String error, Map<String, String> message) {
         this.timestamp = Instant.now().toString();
         this.status = status;
         this.path = path;
