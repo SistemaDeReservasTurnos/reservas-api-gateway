@@ -35,9 +35,9 @@ public class GatewayExceptionHandler {
             responseBody.put("error", errorBody);
         }
 
-        String oauth2ErrrorCode =  String.valueOf(responseBody.get("error"));
+        String oauth2ErrorCode =  String.valueOf(responseBody.get("error"));
 
-        if (Objects.equals(oauth2ErrrorCode, "temporarily_unavailable")) {
+        if (Objects.equals(oauth2ErrorCode, "temporarily_unavailable")) {
             statusCode = HttpStatus.SERVICE_UNAVAILABLE.value();
             statusText = HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase();
         }
