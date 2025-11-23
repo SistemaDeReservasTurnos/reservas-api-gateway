@@ -61,7 +61,7 @@ public class BffController {
     }
 
     @PostMapping("/auth/logout")
-    public Mono<Void> logout(@RequestBody LogoutRequest request) {
+    public Mono<Void> logout(@Valid @RequestBody LogoutRequest request) {
         BodyInserters.FormInserter<String> formData = BodyInserters
                 .fromFormData("token", request.getToken())
                 .with("token_type_hint", "access_token");
