@@ -18,6 +18,7 @@ public class SecurityConfig {
                             .pathMatchers("/api/auth/register").permitAll()
                             .pathMatchers("/api/auth/login").permitAll()
                             .pathMatchers("/api/auth/refresh").permitAll()
+                            .pathMatchers("/api/auth/logout").permitAll()
                             .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(Customizer.withDefaults()))

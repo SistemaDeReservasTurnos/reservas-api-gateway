@@ -1,4 +1,4 @@
-package com.servicio.reserva.gateway.application.dto;
+package com.servicio.reserva.gateway.application.dto.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

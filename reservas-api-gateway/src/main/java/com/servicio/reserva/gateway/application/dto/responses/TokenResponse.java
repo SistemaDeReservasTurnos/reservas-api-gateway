@@ -1,4 +1,4 @@
-package com.servicio.reserva.gateway.application.dto;
+package com.servicio.reserva.gateway.application.dto.responses;
 
 import lombok.Data;
 

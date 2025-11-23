@@ -1,8 +1,9 @@
 package com.servicio.reserva.gateway.infraestructure.controller;
 
-import com.servicio.reserva.gateway.application.dto.LoginRequest;
-import com.servicio.reserva.gateway.application.dto.RefreshTokenRequest;
-import com.servicio.reserva.gateway.application.dto.TokenResponse;
+import com.servicio.reserva.gateway.application.dto.requests.LoginRequest;
+import com.servicio.reserva.gateway.application.dto.requests.LogoutRequest;
+import com.servicio.reserva.gateway.application.dto.requests.RefreshTokenRequest;
+import com.servicio.reserva.gateway.application.dto.responses.TokenResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -57,5 +58,20 @@ public class BffController {
                 .body(formData)
                 .retrieve()
                 .bodyToMono(TokenResponse.class);
+    }
+
+    @PostMapping("/auth/logout")
+    public Mono<Void> logout(@Valid @RequestBody LogoutRequest request) {
+        BodyInserters.FormInserter<String> formData = BodyInserters
+                .fromFormData("token", request.getToken())
+                .with("token_type_hint", "access_token");
+
+        return this.webClient.post()
+                .uri("/oauth2/revoke") // Endpoint estándar de revocación
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(formData)
+                .retrieve()
+                .toBodilessEntity()
+                .then();
     }
 }
