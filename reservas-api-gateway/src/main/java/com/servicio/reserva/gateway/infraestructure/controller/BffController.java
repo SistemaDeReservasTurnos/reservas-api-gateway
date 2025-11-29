@@ -23,9 +23,10 @@ public class BffController {
 
     public BffController(WebClient.Builder webClientBuilder,
                          @Value("${bff.client-id}") String clientId,
-                         @Value("${bff.client-secret}") String clientSecret) {
+                         @Value("${bff.client-secret}") String clientSecret,
+                         @Value("${bff.auth-service-uri}") String authServiceUri) {
         this.webClient = webClientBuilder
-                .baseUrl("lb://reservas-auth-service")
+                .baseUrl(authServiceUri)
                 .filter(ExchangeFilterFunctions.basicAuthentication(clientId, clientSecret))
                 .build();
     }
