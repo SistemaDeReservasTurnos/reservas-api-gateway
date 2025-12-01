@@ -8,7 +8,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
-        "wiremock.server.port=8081"
+        "wiremock.server.port=0"
 })
 class ReservasApiGatewayApplicationTests {
     @Test

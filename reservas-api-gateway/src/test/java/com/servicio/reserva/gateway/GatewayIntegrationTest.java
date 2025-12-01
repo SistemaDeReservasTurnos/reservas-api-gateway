@@ -13,10 +13,7 @@ import com.nimbusds.jwt.SignedJWT;
 import com.servicio.reserva.gateway.application.dto.requests.LoginRequest;
 import com.servicio.reserva.gateway.application.dto.requests.LogoutRequest;
 import com.servicio.reserva.gateway.application.dto.requests.RefreshTokenRequest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,11 +91,11 @@ class GatewayIntegrationTest {
         registry.add("wiremock.server.port", wireMockServer::port);
     }
 
-    // Generador de token JWTs
+    // Generador de token JWT
     private String generateValidJwt(List<String> roles) throws Exception {
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject("juan@test.com")
-                .issuer("http://localhost:8081")
+                .issuer("http://localhost:" + wireMockServer.port())
                 .expirationTime(Date.from(Instant.now().plusSeconds(3600)))
                 .claim("roles", roles)
                 .build();
@@ -315,7 +312,6 @@ class GatewayIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(loginRequest)
                 .exchange()
-                .expectStatus().is5xxServerError()
                 .expectStatus().isEqualTo(503)
                 .expectBody()
                 .jsonPath("$.status").isEqualTo(503)
