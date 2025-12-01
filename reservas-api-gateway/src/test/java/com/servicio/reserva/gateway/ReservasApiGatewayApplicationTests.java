@@ -6,16 +6,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 @TestPropertySource(properties = {
-        "bff.client-id=gateway-test",
-        "bff.client-secret=secret-test-key",
-        "eureka.client.enabled=false",
-        "eureka.client.register-with-eureka=false",
-        "eureka.client.fetch-registry=false"
+        "wiremock.server.port=8081"
 })
 class ReservasApiGatewayApplicationTests {
-
     @Test
     void contextLoads() {
     }

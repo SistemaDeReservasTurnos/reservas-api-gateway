@@ -83,7 +83,9 @@ class GatewayIntegrationTest {
 
     @AfterAll
     static void tearDown() {
-        wireMockServer.stop();
+        if (wireMockServer != null) {
+            wireMockServer.stop();
+        }
     }
 
     // Inyectar el puerto de WireMock en application-test.properties
