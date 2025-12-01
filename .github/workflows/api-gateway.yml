@@ -56,7 +56,7 @@ jobs:
         uses: dorny/test-reporter@v1
         if: always() # Se ejecuta incluso si fallan los tests
         with:
-          name: JUnit Tests Report (Gateway)
+          name: JUnit Tests Report
           # Patrón robusto para encontrar los XMLs de surefire y failsafe
           path: '**/target/*-reports/*.xml'
           reporter: java-junit
