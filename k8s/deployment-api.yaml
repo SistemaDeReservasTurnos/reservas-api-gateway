@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: title
+  name: deploy-api
+  namespace: StudioBarber
   labels:
-    app: title
+    app: api-gateway
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: title
+      app: api-gateway
   template:
     metadata:
-      name: title
       labels:
-        app: title
+        app: api-gateway
     spec:
       containers:
-        - name: title
-          image: nginx
-          imagePullPolicy: IfNotPresent
+        - name: api-gateway
+          #image: sfcg2/studioBarber-api:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
               protocol: TCP
