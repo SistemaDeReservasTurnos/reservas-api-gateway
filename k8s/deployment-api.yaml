@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          # nombre local de la imagen -> api-gateway-local:latest (igual siempre )
+          # nombre local de la imagen -> api-gateway-local:latest (igual siempre)
           image: us-central1-docker.pkg.dev/studiobarber-480215/repo-apigateway/api-gateway:v1.0.0
           imagePullPolicy: Always  # nos aseguramos que siempre use la ultima version de la imagen
           ports:
