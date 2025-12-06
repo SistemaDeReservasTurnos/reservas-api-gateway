@@ -3,9 +3,9 @@ package com.servicio.reserva.gateway.infraestructure.controller;
 import com.servicio.reserva.gateway.application.dto.requests.LoginRequest;
 import com.servicio.reserva.gateway.application.dto.requests.LogoutRequest;
 import com.servicio.reserva.gateway.application.dto.requests.RefreshTokenRequest;
-import com.servicio.reserva.gateway.application.dto.responses.TokenResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +15,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunctions;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -32,7 +34,7 @@ public class BffController {
     }
 
     @PostMapping("/auth/login")
-    public Mono<TokenResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public Mono<Map<String, Object>> login(@Valid @RequestBody LoginRequest loginRequest) {
         BodyInserters.FormInserter<String> formData = BodyInserters
                 .fromFormData("grant_type", "password")
                 .with("username", loginRequest.getEmail())
@@ -44,11 +46,12 @@ public class BffController {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(formData)
                 .retrieve()
-                .bodyToMono(TokenResponse.class);
+                .bodyToMono(new ParameterizedTypeReference<>() {
+                });
     }
 
     @PostMapping("/auth/refresh")
-    public Mono<TokenResponse> refresh(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public Mono<Map<String, Object>> refresh(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         BodyInserters.FormInserter<String> formData = BodyInserters
                 .fromFormData("grant_type", "refresh_token")
                 .with("refresh_token", refreshTokenRequest.getRefresh_token());
@@ -58,7 +61,8 @@ public class BffController {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(formData)
                 .retrieve()
-                .bodyToMono(TokenResponse.class);
+                .bodyToMono(new ParameterizedTypeReference<>() {
+                });
     }
 
     @PostMapping("/auth/logout")
@@ -68,7 +72,7 @@ public class BffController {
                 .with("token_type_hint", "access_token");
 
         return this.webClient.post()
-                .uri("/oauth2/revoke") // Endpoint estándar de revocación
+                .uri("/oauth2/revoke")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(formData)
                 .retrieve()
