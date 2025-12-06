@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: deploy-api
-  namespace: StudioBarber
+  namespace: studio-barber
   labels:
     app: api-gateway
 spec:
