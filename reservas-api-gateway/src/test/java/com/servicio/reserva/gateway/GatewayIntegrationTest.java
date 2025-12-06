@@ -221,7 +221,7 @@ class GatewayIntegrationTest {
                 .withRequestBody(containing("grant_type=password")) // Verifica parámetros
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody("{\"access_token\":\"fake-jwt\", \"refresh_token\":\"fake-refresh\"}")
+                        .withBody("{\"access_token\":\"fake-jwt\", \"refresh_token\":\"fake-refresh\",\"token_type\":\"Bearer\",\"expires_in\":899,\"userId\":1,\"name\":\"juan\",\"email\":\"juan@test.com\"}")
                         .withStatus(200)));
 
         // 2. Llamar al Endpoint Público del Gateway
@@ -238,7 +238,12 @@ class GatewayIntegrationTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.access_token").isEqualTo("fake-jwt")
-                .jsonPath("$.refresh_token").isEqualTo("fake-refresh");
+                .jsonPath("$.refresh_token").isEqualTo("fake-refresh")
+                .jsonPath("$.token_type").isEqualTo("Bearer")
+                .jsonPath("$.expires_in").isEqualTo(899)
+                .jsonPath("$.userId").isEqualTo(1)
+                .jsonPath("$.name").isEqualTo("juan")
+                .jsonPath("$.email").isEqualTo("juan@test.com");
     }
 
     /**
@@ -260,7 +265,7 @@ class GatewayIntegrationTest {
                 .withRequestBody(containing("grant_type=refresh_token"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody("{\"access_token\":\"new-jwt\", \"refresh_token\":\"new-refresh\"}")
+                        .withBody("{\"access_token\":\"new-jwt\", \"refresh_token\":\"new-refresh\",\"token_type\":\"Bearer\",\"expires_in\":899}")
                         .withStatus(200)));
 
         RefreshTokenRequest request = RefreshTokenRequest.builder()
@@ -275,7 +280,9 @@ class GatewayIntegrationTest {
                 .expectStatus().isOk()
                 .expectBody()
                 .jsonPath("$.access_token").isEqualTo("new-jwt")
-                .jsonPath("$.refresh_token").isEqualTo("new-refresh");
+                .jsonPath("$.refresh_token").isEqualTo("new-refresh")
+                .jsonPath("$.token_type").isEqualTo("Bearer")
+                .jsonPath("$.expires_in").isEqualTo(899);
     }
 
     /**
