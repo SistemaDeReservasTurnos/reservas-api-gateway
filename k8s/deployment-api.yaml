@@ -28,12 +28,6 @@ spec:
             - name: SPRING_PROFILES_ACTIVE # -> para activar el perfil de cloud (configuraciones especificas para la nube)
               value: "cloud"
 
-            - name: KEYSTORE_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: keystore-password-k8s
-                  key: KEYSTORE_PASS
-
           volumeMounts:
             - name: secrets-api-volume
               mountPath: "/etc/secrets"  # <-- Esto coincide con tu application-cloud.properties
