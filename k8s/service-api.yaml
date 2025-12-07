@@ -12,5 +12,6 @@ spec:
       targetPort: 8080
   type: ClusterIP # expuesto dentro del cluster
 
+
   #app -> etiqueta del pod, cualquiera que la tenga pertenece a este service
   # si no coincide la ruta con la que se hace la peticion GKE proporciona un backend default con respuesta HTTP 404
