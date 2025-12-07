@@ -15,6 +15,7 @@ spec:
       labels:
         app: api-gateway
     spec:
+      serviceAccountName: api-permissions-ksa
       containers:
         - name: api-gateway
           # nombre local de la imagen -> api-gateway-local:latest (igual siempre )
@@ -26,6 +27,25 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE # -> para activar el perfil de cloud (configuraciones especificas para la nube)
               value: "cloud"
+
+            - name: KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: keystore-password-k8s
+                  key: KEYSTORE_PASS
+
+          volumeMounts:
+            - name: secrets-api-volume
+              mountPath: "/etc/secrets"  # <-- Esto coincide con tu application-cloud.properties
+              readOnly: true
+      volumes:
+        - name: secrets-api-volume
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClassName: "gcp-secrets-config-api"
+
 
 # cambios en el codigo = nueva imagen = nueva version vX.0.0
 # pasos para subir a Artifact Registry
