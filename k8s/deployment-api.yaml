@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-api
+  namespace: studio-barber
+  labels:
+    app: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      serviceAccountName: api-permissions-ksa
+      containers:
+        - name: api-gateway
+          # nombre local de la imagen -> api-gateway-local:latest (igual siempre )
+          image: us-central1-docker.pkg.dev/studiobarber-480215/repo-apigateway/api-gateway:v1.0.0
+          imagePullPolicy: Always  # nos aseguramos que siempre use la ultima version de la imagen
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: SPRING_PROFILES_ACTIVE # -> para activar el perfil de cloud (configuraciones especificas para la nube)
+              value: "cloud"
+
+          volumeMounts:
+            - name: secrets-api-volume
+              mountPath: "/etc/secrets"  # <-- Esto coincide con tu application-cloud.properties
+              readOnly: true
+      volumes:
+        - name: secrets-api-volume
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClassName: "gcp-secrets-config-api"
+
+
+# cambios en el codigo = nueva imagen = nueva version vX.0.0
+# pasos para subir a Artifact Registry
+# 1. docker build -t api-gateway-local:latest . -> contruir imagen local
+# 2. docker tag api-gateway-local:latest us-central1-docker.pkg.dev/studiobarber-480215/repo-apigateway/api-gateway:v1.0.0 -> tag para subir a AR
+# 3. docker push us-central1-docker.pkg.dev/studiobarber-480215/repo-apigateway/api-gateway:v1.0.0 -> subir imagen
